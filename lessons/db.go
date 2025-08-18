@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
-	_ "github.com/lib/pq" // Importing the pq driver for PostgreSQL
+	"github.com/joho/godotenv" // Importing the godotenv package to load environment variables
+	_ "github.com/lib/pq"      // Importing the pq driver for PostgreSQL
 )
 
 func dbFunction() {
