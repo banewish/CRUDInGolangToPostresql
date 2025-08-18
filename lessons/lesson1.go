@@ -1,9 +1,11 @@
 package main
 
-// This is a simple Go program that prints various outputs to the console.
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
+
 	fmt.Println("Hello, Go!")
 
 	fmt.Println("go" + "lang")
@@ -12,4 +14,6 @@ func main() {
 	fmt.Println(true && false)
 	fmt.Println(true || false)
 	fmt.Println(!true)
+
+	dbFunction()
 }
