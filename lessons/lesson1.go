@@ -41,6 +41,7 @@ func main() {
 			} else {
 				fmt.Printf("User created with ID: %d\n", id)
 			}
+
 		case "0":
 			if db != nil {
 				db.Close()
