@@ -9,6 +9,8 @@ import (
 	_ "github.com/lib/pq"      // Importing the pq driver for PostgreSQL
 )
 
+var db *sql.DB
+
 func dbFunction() {
 
 	// Load .env file
@@ -24,12 +26,11 @@ func dbFunction() {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
-	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname))
+	db, err = sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname))
 	if err != nil {
 		fmt.Println("Error connecting to the database:", err)
 		return
 	}
-	defer db.Close()
 
 	// Ping the database to verify connection
 	if err := db.Ping(); err != nil {
@@ -37,4 +38,17 @@ func dbFunction() {
 		return
 	}
 	fmt.Println("Successfully connected and pinged the database!")
+
+	// defer db.Close() to close the database connection when the function exits
+}
+
+// createUser inserts a new user into the database and returns the user's ID.
+func createUser(name string, age int) (int, error) {
+	var id int
+	query := `INSERT INTO users (name, age) VALUES ($1, $2) RETURNING id`
+	err := db.QueryRow(query, name, age).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
