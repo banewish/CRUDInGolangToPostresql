@@ -11,6 +11,12 @@ import (
 
 var db *sql.DB
 
+type User struct {
+	ID   int
+	Name string
+	Age  int
+}
+
 func dbFunction() {
 
 	// Load .env file
@@ -51,4 +57,31 @@ func createUser(name string, age int) (int, error) {
 		return 0, err
 	}
 	return id, nil
+}
+
+func readUsers() ([]User, error) {
+	rows, err := db.Query("SELECT id, name, age FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var u User
+		if err := rows.Scan(&u.ID, &u.Name, &u.Age); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, nil
+}
+
+func readUserByID(id int) (*User, error) {
+	var u User
+	err := db.QueryRow("SELECT id, name, age FROM users WHERE id = $1", id).Scan(&u.ID, &u.Name, &u.Age)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
 }
