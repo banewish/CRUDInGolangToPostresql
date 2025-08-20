@@ -85,3 +85,8 @@ func readUserByID(id int) (*User, error) {
 	}
 	return &u, nil
 }
+
+func deleteUserByID(id int) error {
+	_, err := db.Exec("DELETE FROM users WHERE id = $1", id)
+	return err
+}

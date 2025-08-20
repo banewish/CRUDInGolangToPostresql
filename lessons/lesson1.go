@@ -17,6 +17,7 @@ func main() {
 		fmt.Println("1 - Create User")
 		fmt.Println("2 - Read Users")
 		fmt.Println("3 - Read User by ID")
+		fmt.Println("4 - Delete User by ID")
 		fmt.Println("0 - Exit")
 		fmt.Print("Enter choice: ")
 		scanner.Scan()
@@ -76,6 +77,22 @@ func main() {
 				fmt.Println("Error reading user:", err)
 			} else {
 				fmt.Printf("ID: %d, Name: %s, Age: %d\n", user.ID, user.Name, user.Age)
+			}
+
+		case "4":
+			fmt.Println("Enter user ID to delete:")
+			scanner.Scan()
+			idStr := scanner.Text()
+			id, err := strconv.Atoi(strings.TrimSpace(idStr))
+			if err != nil {
+				fmt.Println("Invalid ID")
+				continue
+			}
+			err = deleteUserByID(id)
+			if err != nil {
+				fmt.Println("Error deleting user:", err)
+			} else {
+				fmt.Printf("User deleted with ID: %d\n", id)
 			}
 
 		default:
