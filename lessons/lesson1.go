@@ -18,6 +18,7 @@ func main() {
 		fmt.Println("2 - Read Users")
 		fmt.Println("3 - Read User by ID")
 		fmt.Println("4 - Delete User by ID")
+		fmt.Println("5 - Update User by ID")
 		fmt.Println("0 - Exit")
 		fmt.Print("Enter choice: ")
 		scanner.Scan()
@@ -44,13 +45,6 @@ func main() {
 			} else {
 				fmt.Printf("User created with ID: %d\n", id)
 			}
-
-		case "0":
-			if db != nil {
-				db.Close()
-			}
-			fmt.Println("Exiting.")
-			return
 
 		case "2":
 			users, err := readUsers()
@@ -94,6 +88,43 @@ func main() {
 			} else {
 				fmt.Printf("User deleted with ID: %d\n", id)
 			}
+
+		case "5":
+			fmt.Print("Enter user ID to update: ")
+			scanner.Scan()
+			idStr := scanner.Text()
+			id, err := strconv.Atoi(strings.TrimSpace(idStr))
+			if err != nil {
+				fmt.Println("Invalid ID")
+				continue
+			}
+
+			fmt.Print("Enter new name: ")
+			scanner.Scan()
+			newName := scanner.Text()
+
+			fmt.Print("Enter new age: ")
+			scanner.Scan()
+			ageStr := scanner.Text()
+			newAge, err := strconv.Atoi(strings.TrimSpace(ageStr))
+			if err != nil {
+				fmt.Println("Invalid age")
+				continue
+			}
+
+			err = updateUserByID(id, newName, newAge)
+			if err != nil {
+				fmt.Println("Error updating user:", err)
+			} else {
+				fmt.Printf("User with ID %d updated successfully.\n", id)
+			}
+
+		case "0":
+			if db != nil {
+				db.Close()
+			}
+			fmt.Println("Exiting.")
+			return
 
 		default:
 			fmt.Println("Unknown choice.")

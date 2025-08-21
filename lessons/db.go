@@ -90,3 +90,18 @@ func deleteUserByID(id int) error {
 	_, err := db.Exec("DELETE FROM users WHERE id = $1", id)
 	return err
 }
+
+func updateUserByID(id int, name string, age int) error {
+	result, err := db.Exec("UPDATE users SET name = $1, age = $2 WHERE id = $3", name, age, id)
+	if err != nil {
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return fmt.Errorf("no user found with ID %d", id)
+	}
+	return nil
+}
