@@ -8,6 +8,14 @@ import (
 	"strings"
 )
 
+func parsePositiveInt(s string) (int, error) {
+	n, err := strconv.Atoi(strings.TrimSpace(s))
+	if err != nil || n <= 0 {
+		return 0, fmt.Errorf("please enter a positive number")
+	}
+	return n, nil
+}
+
 func main() {
 	dbFunction()
 	scanner := bufio.NewScanner(os.Stdin)
@@ -33,7 +41,7 @@ func main() {
 			fmt.Print("Enter age: ")
 			scanner.Scan()
 			ageStr := scanner.Text()
-			age, err := strconv.Atoi(strings.TrimSpace(ageStr))
+			age, err := parsePositiveInt(ageStr)
 			if err != nil {
 				fmt.Println("Invalid age")
 				continue
@@ -93,7 +101,7 @@ func main() {
 			fmt.Print("Enter user ID to update: ")
 			scanner.Scan()
 			idStr := scanner.Text()
-			id, err := strconv.Atoi(strings.TrimSpace(idStr))
+			id, err := parsePositiveInt(idStr)
 			if err != nil {
 				fmt.Println("Invalid ID")
 				continue
