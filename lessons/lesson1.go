@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -14,6 +15,10 @@ func parsePositiveInt(s string) (int, error) {
 		return 0, fmt.Errorf("please enter a positive number")
 	}
 	return n, nil
+}
+
+func isValidName(name string) bool {
+	return strings.TrimSpace(name) != ""
 }
 
 func main() {
@@ -37,19 +42,23 @@ func main() {
 			fmt.Print("Enter name: ")
 			scanner.Scan()
 			name := scanner.Text()
+			if !isValidName(name) {
+				log.Println("Name cannot be empty")
+				continue
+			}
 
 			fmt.Print("Enter age: ")
 			scanner.Scan()
 			ageStr := scanner.Text()
 			age, err := parsePositiveInt(ageStr)
 			if err != nil {
-				fmt.Println("Invalid age")
+				log.Println("Invalid age")
 				continue
 			}
 
 			id, err := createUser(name, age)
 			if err != nil {
-				fmt.Println("Error creating user:", err)
+				log.Println("Error creating user:", err)
 			} else {
 				fmt.Printf("User created with ID: %d\n", id)
 			}
@@ -57,7 +66,7 @@ func main() {
 		case "2":
 			users, err := readUsers()
 			if err != nil {
-				fmt.Println("Error reading users:", err)
+				log.Println("Error reading users:", err)
 			} else {
 				fmt.Println("Users:")
 				for _, user := range users {
@@ -71,12 +80,12 @@ func main() {
 			idStr := scanner.Text()
 			id, err := strconv.Atoi(strings.TrimSpace(idStr))
 			if err != nil {
-				fmt.Println("Invalid ID")
+				log.Println("Invalid ID")
 				continue
 			}
 			user, err := readUserByID(id)
 			if err != nil {
-				fmt.Println("Error reading user:", err)
+				log.Println("Error reading user:", err)
 			} else {
 				fmt.Printf("ID: %d, Name: %s, Age: %d\n", user.ID, user.Name, user.Age)
 			}
@@ -87,12 +96,12 @@ func main() {
 			idStr := scanner.Text()
 			id, err := strconv.Atoi(strings.TrimSpace(idStr))
 			if err != nil {
-				fmt.Println("Invalid ID")
+				log.Println("Invalid ID")
 				continue
 			}
 			err = deleteUserByID(id)
 			if err != nil {
-				fmt.Println("Error deleting user:", err)
+				log.Println("Error deleting user:", err)
 			} else {
 				fmt.Printf("User deleted with ID: %d\n", id)
 			}
@@ -103,26 +112,30 @@ func main() {
 			idStr := scanner.Text()
 			id, err := parsePositiveInt(idStr)
 			if err != nil {
-				fmt.Println("Invalid ID")
+				log.Println("Invalid ID")
 				continue
 			}
 
 			fmt.Print("Enter new name: ")
 			scanner.Scan()
 			newName := scanner.Text()
+			if !isValidName(newName) {
+				log.Println("Name cannot be empty")
+				continue
+			}
 
 			fmt.Print("Enter new age: ")
 			scanner.Scan()
 			ageStr := scanner.Text()
 			newAge, err := strconv.Atoi(strings.TrimSpace(ageStr))
 			if err != nil {
-				fmt.Println("Invalid age")
+				log.Println("Invalid age")
 				continue
 			}
 
 			err = updateUserByID(id, newName, newAge)
 			if err != nil {
-				fmt.Println("Error updating user:", err)
+				log.Println("Error updating user:", err)
 			} else {
 				fmt.Printf("User with ID %d updated successfully.\n", id)
 			}
@@ -135,7 +148,7 @@ func main() {
 			return
 
 		default:
-			fmt.Println("Unknown choice.")
+			log.Println("Unknown choice.")
 		}
 	}
 }
