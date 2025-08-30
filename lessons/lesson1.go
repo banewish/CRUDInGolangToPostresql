@@ -21,6 +21,10 @@ func isValidName(name string) bool {
 	return strings.TrimSpace(name) != ""
 }
 
+func isValidCountryCode(code string) bool {
+	return strings.TrimSpace(code) != ""
+}
+
 func main() {
 	dbFunction()
 	scanner := bufio.NewScanner(os.Stdin)
@@ -32,6 +36,9 @@ func main() {
 		fmt.Println("3 - Read User by ID")
 		fmt.Println("4 - Delete User by ID")
 		fmt.Println("5 - Update User by ID")
+		fmt.Println("6 - Create Country")
+		fmt.Println("7 - Create UserInfo")
+		fmt.Println("8 - Update UserInfo")
 		fmt.Println("0 - Exit")
 		fmt.Print("Enter choice: ")
 		scanner.Scan()
@@ -39,24 +46,23 @@ func main() {
 
 		switch choice {
 		case "1":
-			fmt.Print("Enter name: ")
+			fmt.Print("Enter username: ")
 			scanner.Scan()
 			name := scanner.Text()
 			if !isValidName(name) {
-				log.Println("Name cannot be empty")
+				log.Println("Username cannot be empty")
 				continue
 			}
 
-			fmt.Print("Enter age: ")
+			fmt.Print("Enter country code: ")
 			scanner.Scan()
-			ageStr := scanner.Text()
-			age, err := parsePositiveInt(ageStr)
-			if err != nil {
-				log.Println("Invalid age")
+			countryCode := scanner.Text()
+			if !isValidCountryCode(countryCode) {
+				log.Println("Country code cannot be empty")
 				continue
 			}
 
-			id, err := createUser(name, age)
+			id, err := createUser(name, countryCode)
 			if err != nil {
 				log.Println("Error creating user:", err)
 			} else {
@@ -70,31 +76,32 @@ func main() {
 			} else {
 				fmt.Println("Users:")
 				for _, user := range users {
-					fmt.Printf("ID: %d, Name: %s, Age: %d\n", user.ID, user.Name, user.Age)
+					fmt.Printf("ID: %d, Username: %s, CountryCode: %s\n", user.ID, user.Username, user.CountryCode)
 				}
-
 			}
+
 		case "3":
 			fmt.Print("Enter user ID to read: ")
 			scanner.Scan()
 			idStr := scanner.Text()
-			id, err := strconv.Atoi(strings.TrimSpace(idStr))
+			id, err := parsePositiveInt(idStr)
 			if err != nil {
 				log.Println("Invalid ID")
 				continue
 			}
-			user, err := readUserByID(id)
+
+			user, countryName, err := readUserByID(id)
 			if err != nil {
 				log.Println("Error reading user:", err)
 			} else {
-				fmt.Printf("ID: %d, Name: %s, Age: %d\n", user.ID, user.Name, user.Age)
+				fmt.Printf("ID: %d, Username: %s, CountryCode: %s, CountryName: %s\n", user.ID, user.Username, user.CountryCode, countryName)
 			}
 
 		case "4":
-			fmt.Println("Enter user ID to delete:")
+			fmt.Print("Enter user ID to delete: ")
 			scanner.Scan()
 			idStr := scanner.Text()
-			id, err := strconv.Atoi(strings.TrimSpace(idStr))
+			id, err := parsePositiveInt(idStr)
 			if err != nil {
 				log.Println("Invalid ID")
 				continue
@@ -116,28 +123,95 @@ func main() {
 				continue
 			}
 
-			fmt.Print("Enter new name: ")
+			fmt.Print("Enter new username: ")
 			scanner.Scan()
 			newName := scanner.Text()
 			if !isValidName(newName) {
-				log.Println("Name cannot be empty")
+				log.Println("Username cannot be empty")
 				continue
 			}
 
-			fmt.Print("Enter new age: ")
+			fmt.Print("Enter new country code: ")
 			scanner.Scan()
-			ageStr := scanner.Text()
-			newAge, err := strconv.Atoi(strings.TrimSpace(ageStr))
-			if err != nil {
-				log.Println("Invalid age")
+			newCountryCode := scanner.Text()
+			if !isValidCountryCode(newCountryCode) {
+				log.Println("Country code cannot be empty")
 				continue
 			}
 
-			err = updateUserByID(id, newName, newAge)
+			err = updateUserByID(id, newName, newCountryCode)
 			if err != nil {
 				log.Println("Error updating user:", err)
 			} else {
 				fmt.Printf("User with ID %d updated successfully.\n", id)
+			}
+
+		case "6":
+			fmt.Print("Enter country code: ")
+			scanner.Scan()
+			code := scanner.Text()
+			if !isValidCountryCode(code) {
+				log.Println("Country code cannot be empty")
+				continue
+			}
+			fmt.Print("Enter country name: ")
+			scanner.Scan()
+			name := scanner.Text()
+			if !isValidName(name) {
+				log.Println("Country name cannot be empty")
+				continue
+			}
+			err := createCountry(code, name)
+			if err != nil {
+				log.Println("Error creating country:", err)
+			} else {
+				fmt.Println("Country created successfully.")
+			}
+
+		case "7":
+			fmt.Print("Enter user ID for userInfo: ")
+			scanner.Scan()
+			idStr := scanner.Text()
+			id, err := parsePositiveInt(idStr)
+			if err != nil {
+				log.Println("Invalid ID")
+				continue
+			}
+			fmt.Print("Enter user phone: ")
+			scanner.Scan()
+			phone := scanner.Text()
+			if !isValidName(phone) {
+				log.Println("Phone cannot be empty")
+				continue
+			}
+			err = createUserInfo(id, phone)
+			if err != nil {
+				log.Println("Error creating userInfo:", err)
+			} else {
+				fmt.Println("UserInfo created successfully.")
+			}
+
+		case "8":
+			fmt.Print("Enter user ID for userInfo update: ")
+			scanner.Scan()
+			idStr := scanner.Text()
+			id, err := parsePositiveInt(idStr)
+			if err != nil {
+				log.Println("Invalid ID")
+				continue
+			}
+			fmt.Print("Enter new user phone: ")
+			scanner.Scan()
+			phone := scanner.Text()
+			if !isValidName(phone) {
+				log.Println("Phone cannot be empty")
+				continue
+			}
+			err = updateUserInfo(id, phone)
+			if err != nil {
+				log.Println("Error updating userInfo:", err)
+			} else {
+				fmt.Println("UserInfo updated successfully.")
 			}
 
 		case "0":
