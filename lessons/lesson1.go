@@ -39,6 +39,7 @@ func main() {
 		fmt.Println("6 - Create Country")
 		fmt.Println("7 - Create UserInfo")
 		fmt.Println("8 - Update UserInfo")
+		fmt.Println("9 - Delete UserInfo by ID")
 		fmt.Println("0 - Exit")
 		fmt.Print("Enter choice: ")
 		scanner.Scan()
@@ -111,6 +112,17 @@ func main() {
 				log.Println("Error deleting user:", err)
 			} else {
 				fmt.Printf("User deleted with ID: %d\n", id)
+				// Send email notification
+				emailErr := SendEmail(
+					"kyselovdev@gmail.com",
+					"User Deleted",
+					fmt.Sprintf("User with ID %d has been deleted.", id),
+				)
+				if emailErr != nil {
+					log.Println("Failed to send email:", emailErr)
+				} else {
+					fmt.Println("Email notification sent.")
+				}
 			}
 
 		case "5":
@@ -212,6 +224,22 @@ func main() {
 				log.Println("Error updating userInfo:", err)
 			} else {
 				fmt.Println("UserInfo updated successfully.")
+			}
+
+		case "9":
+			fmt.Print("Enter userInfo ID to delete: ")
+			scanner.Scan()
+			idStr := scanner.Text()
+			id, err := parsePositiveInt(idStr)
+			if err != nil {
+				log.Println("Invalid ID")
+				continue
+			}
+			err = deleteUserInfoByID(id)
+			if err != nil {
+				log.Println("Error deleting userInfo:", err)
+			} else {
+				fmt.Printf("UserInfo deleted with ID: %d\n", id)
 			}
 
 		case "0":

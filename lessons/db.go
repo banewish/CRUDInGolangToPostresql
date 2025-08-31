@@ -2,10 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
-
 	"encoding/json"
+	"fmt"
+	"net/smtp"
+	"os"
 	"time"
 
 	"github.com/joho/godotenv" // Importing the godotenv package to load environment variables
@@ -157,7 +157,27 @@ func updateUserInfo(id int, phone string) error {
 	return err
 }
 
+func deleteUserInfoByID(id int) error {
+	_, err := db.Exec("DELETE FROM userInfo WHERE id = $1", id)
+	return err
+}
+
 func createCountry(code, name string) error {
 	_, err := db.Exec("INSERT INTO countries (countryCode, countryName) VALUES ($1, $2)", code, name)
 	return err
+}
+
+func SendEmail(to, subject, body string) error {
+	from := os.Getenv("EMAIL_ADDRESS")
+	password := os.Getenv("EMAIL_PASSWORD")
+	smtpHost := os.Getenv("SMTP_HOST")
+	smtpPort := os.Getenv("SMTP_PORT")
+
+	msg := "From: " + from + "\n" +
+		"To: " + to + "\n" +
+		"Subject: " + subject + "\n\n" +
+		body
+
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+	return smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, []byte(msg))
 }
